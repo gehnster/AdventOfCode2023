@@ -129,7 +129,7 @@ namespace AdventOfCode2023
             }
 
             await LowestLocationNumber(seeds, soilMap, fertilizerMap, waterMap, lightMap, tempMap, humidityMap, locationMap);
-            await LowestLocationNumber(longSeeds, soilMap, fertilizerMap, waterMap, lightMap, tempMap, humidityMap, locationMap);
+            LowestLocationNumber(longSeeds, soilMap, fertilizerMap, waterMap, lightMap, tempMap, humidityMap, locationMap);
             stopwatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopwatch.Elapsed;
@@ -149,13 +149,13 @@ namespace AdventOfCode2023
 
             foreach (var seed in seeds)
             {
-                var soilNumber = await FindValue(seed, soilMap);
-                var fertilizerNumber = await FindValue(soilNumber, fertilizerMap);
-                var waterNumber = await FindValue(fertilizerNumber, waterMap);
-                var lightNumber = await FindValue(waterNumber, lightMap);
-                var tempNumber = await FindValue(lightNumber, tempMap);
-                var humidityNumber = await FindValue(tempNumber, humidityMap);
-                var locationNumber = await FindValue(humidityNumber, locationMap);
+                var soilNumber = FindValue(seed, soilMap);
+                var fertilizerNumber = FindValue(soilNumber, fertilizerMap);
+                var waterNumber = FindValue(fertilizerNumber, waterMap);
+                var lightNumber = FindValue(waterNumber, lightMap);
+                var tempNumber = FindValue(lightNumber, tempMap);
+                var humidityNumber = FindValue(tempNumber, humidityMap);
+                var locationNumber = FindValue(humidityNumber, locationMap);
 
                 if (locationNumber < lowestLocation)
                     lowestLocation = locationNumber;
@@ -164,7 +164,7 @@ namespace AdventOfCode2023
             Console.WriteLine($"The lowest location value is: {lowestLocation}");
         }
 
-        private async Task LowestLocationNumber(List<SeedRange> seeds, List<Range> soilMap, List<Range> fertilizerMap,
+        private void LowestLocationNumber(List<SeedRange> seeds, List<Range> soilMap, List<Range> fertilizerMap,
             List<Range> waterMap, List<Range> lightMap, List<Range> tempMap, List<Range> humidityMap,
             List<Range> locationMap)
         {
@@ -174,13 +174,7 @@ namespace AdventOfCode2023
             {
                 for (var i = seedRange.Start; i < seedRange.Start+seedRange.Length; i++)
                 {
-                    var soilNumber = await FindValue(i, soilMap);
-                    var fertilizerNumber = await FindValue(soilNumber, fertilizerMap);
-                    var waterNumber = await FindValue(fertilizerNumber, waterMap);
-                    var lightNumber = await FindValue(waterNumber, lightMap);
-                    var tempNumber = await FindValue(lightNumber, tempMap);
-                    var humidityNumber = await FindValue(tempNumber, humidityMap);
-                    var locationNumber = await FindValue(humidityNumber, locationMap);
+                    var locationNumber = FindValue(FindValue(FindValue(FindValue(FindValue(FindValue(FindValue(i, soilMap), fertilizerMap), waterMap), lightMap), tempMap), humidityMap), locationMap);
 
                     if (locationNumber < lowestLocation)
                         lowestLocation = locationNumber;
@@ -190,13 +184,13 @@ namespace AdventOfCode2023
             Console.WriteLine($"The lowest location value for seed range is: {lowestLocation}");
         }
 
-        private async Task<long> FindValue(long number, List<Range> map)
+        private long FindValue(long number, List<Range> map)
         {
             foreach (var range in map)
             {
                 if (range.SourceStart <= number && range.SourceStart + range.Length >= number)
                 {
-                    return (range.DestinationStart + range.Length) - (range.SourceStart + range.Length - number);
+                    return range.DestinationStart + (number - range.SourceStart);
                 }
             }
 
