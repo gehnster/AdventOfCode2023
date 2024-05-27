@@ -52,7 +52,7 @@ namespace AdventOfCode2023
             stepCount = 0L;
             var startingNodesPart2 = nodes.Keys.Where(x => x.EndsWith('A')).ToList();
             var currentNodesPart2 = startingNodesPart2;
-            var increment = 1000000000L;
+            var nodeLength = new List<long>();
 
             while (!currentNodesPart2.All(x => x.EndsWith('Z')))
             {
@@ -70,14 +70,15 @@ namespace AdventOfCode2023
 
                 instructions.Enqueue(currentInstruction);
                 stepCount++;
-                if (stepCount > increment)
+
+                if (currentNodesPart2.Any(x => x.EndsWith('Z')))
                 {
-                    Console.WriteLine($"Increment: {stepCount}");
-                    increment += 1000000000L;
+                    nodeLength.Add(stepCount);
+                    currentNodesPart2.RemoveAll(x => x.EndsWith('Z'));
                 }
             }
 
-            Console.WriteLine($"Total steps taken is {stepCount}");
+            Console.WriteLine($"Total steps taken is {LCM(nodeLength.ToArray())}");
             stopwatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopwatch.Elapsed;
@@ -87,6 +88,23 @@ namespace AdventOfCode2023
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
             Console.WriteLine($"Total running time was {elapsedTime}");
+        }
+
+        static long GCD(long n1, long n2)
+        {
+            if (n2 == 0)
+            {
+                return n1;
+            }
+            else
+            {
+                return GCD(n2, n1 % n2);
+            }
+        }
+
+        public static long LCM(long[] numbers)
+        {
+            return numbers.Aggregate((S, val) => S * val / GCD(S, val));
         }
     }
 
