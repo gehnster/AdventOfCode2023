@@ -37,6 +37,10 @@ switch (day)
         var day7 = new Day7();
         await day7.Run();
         break;
+    case 8:
+        var day8 = new Day8();
+        await day8.Run();
+        break;
     default:
         Console.WriteLine("How did I get to default case?!");
         break;
